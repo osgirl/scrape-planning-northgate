@@ -52,7 +52,7 @@ function extract(response) {
     }
 }
 
-function data(response) {
+function results(response) {
     const document = Cheerio.load(response.body)
     const nextPage = document('[title="Goto Page 2"]').contents()
     if (nextPage.length > 0) throw new Error('Found a next-page link')
@@ -62,7 +62,7 @@ function data(response) {
             url: base + Cheerio.load(row)('[title="View Application Details"] a').attr('href').replace(/\s+/g, ''),
             number: Cheerio.load(row)('[title="View Application Details"] a').text().trim(),
             address: Cheerio.load(row)('[title="Site Address"]').text().trim(),
-            description: Cheerio.load(row)('[title="Development Description"]').text().trim().replace(/\r/g, '').replace(/\n+/, '\n'),
+            proposal: Cheerio.load(row)('[title="Development Description"]').text().trim().replace(/\r/g, '').replace(/\n+/, '\n'),
             status: Cheerio.load(row)('[title="Status"]').text().trim(),
             registeredDate: Cheerio.load(row)('[title="Date Registered"]').text().trim(),
             decision: Cheerio.load(row)('[title="Decision"]').text().trim()
@@ -76,7 +76,7 @@ Highland(Config.locations)
     .flatMap(http)
     .map(extract)
     .flatMap(http)
-    .flatMap(data)
+    .flatMap(results)
     .errors(e => console.error(e.stack))
     .through(CSVWriter())
     .pipe(FS.createWriteStream('planning-northgate.csv'))
