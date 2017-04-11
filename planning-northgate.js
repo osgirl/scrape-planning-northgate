@@ -19,9 +19,8 @@ const http = Highland.wrapCallback((location, callback) => {
 function search(response) {
     console.log('Scraping ' + response.request.uri.host + '...')
     const document = Cheerio.load(response.body)
-    const startYear = 2000
-    return Array.from({ length: new Date().getFullYear() - startYear + 1 }).map((_, i) => {
-        const year = startYear + i
+    return Array.from({ length: new Date().getFullYear() - Config.startYear + 1 }).map((_, i) => {
+        const year = Config.startYear + i
         return {
             method: 'POST',
             uri: response.request.href,
